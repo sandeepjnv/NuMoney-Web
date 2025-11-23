@@ -29,8 +29,8 @@ export function MembersPanel() {
 
   const openBalanceDialog = (memberId: string) => {
     const member = members.find((m) => m.id === memberId);
-    const inr = member?.balances.find((b) => b.currency === 'INR');
-    const myr = member?.balances.find((b) => b.currency === 'MYR');
+    const inr = member?.balances?.find((b) => b.currency === 'INR');
+    const myr = member?.balances?.find((b) => b.currency === 'MYR');
     setInrBalance(inr?.amount?.toString() || '0');
     setMyrBalance(myr?.amount?.toString() || '0');
     setMyrFxRate(myr?.fxRate?.toString() || '19');
@@ -49,8 +49,8 @@ export function MembersPanel() {
   const getBalanceDisplay = (memberId: string) => {
     const member = members.find((m) => m.id === memberId);
     const parts: string[] = [];
-    const inr = member?.balances.find((b) => b.currency === 'INR');
-    const myr = member?.balances.find((b) => b.currency === 'MYR');
+    const inr = member?.balances?.find((b) => b.currency === 'INR');
+    const myr = member?.balances?.find((b) => b.currency === 'MYR');
     if (inr && inr.amount !== 0) parts.push(`₹${inr.amount.toLocaleString()}`);
     if (myr && myr.amount !== 0) parts.push(`RM ${myr.amount.toLocaleString()}`);
     return parts.length > 0 ? parts.join(' + ') : 'No starting balance';
