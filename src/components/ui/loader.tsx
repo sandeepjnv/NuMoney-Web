@@ -28,21 +28,20 @@ export function Loader({ className, size = 'md', text }: LoaderProps) {
   );
 }
 
-interface LoadingOverlayProps {
+interface GlobalLoaderProps {
   isLoading: boolean;
   text?: string;
-  children: React.ReactNode;
 }
 
-export function LoadingOverlay({ isLoading, text, children }: LoadingOverlayProps) {
+export function GlobalLoader({ isLoading, text = 'Please wait...' }: GlobalLoaderProps) {
+  if (!isLoading) return null;
+
   return (
-    <div className="relative">
-      {children}
-      {isLoading && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg">
-          <Loader text={text} />
-        </div>
-      )}
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-[100]">
+      <div className="bg-card p-6 rounded-xl shadow-lg border flex flex-col items-center gap-4">
+        <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-medium text-muted-foreground">{text}</p>
+      </div>
     </div>
   );
 }

@@ -29,7 +29,7 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { Receipt, Users, TrendingUp, Wallet, HandCoins, Banknote, Calculator } from 'lucide-react';
-import { FullPageLoader, LoadingOverlay } from '@/components/ui/loader';
+import { FullPageLoader, GlobalLoader } from '@/components/ui/loader';
 
 const ADMIN_PASSWORD = 'numoney2024';
 
@@ -42,7 +42,7 @@ const navItems = [
 ];
 
 function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
-  const { currentTrip, isLoading, isMutating } = useTripContext();
+  const { currentTrip, isLoading, isMutating, refetch } = useTripContext();
   const [activeTab, setActiveTab] = useState('expenses');
 
   if (isLoading || !currentTrip) {
@@ -54,7 +54,17 @@ function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
 
   const visibleNavItems = navItems.filter(item => !item.adminOnly || isAdmin);
 
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    // Refetch data when switching to balances or settlement tabs
+    if (tabId === 'balances' || tabId === 'settle') {
+      refetch();
+    }
+  };
+
   return (
+    <>
+    <GlobalLoader isLoading={isMutating} text="Saving..." />
     <SidebarProvider>
       <Sidebar collapsible="icon">
         <SidebarHeader className="border-b">
@@ -75,7 +85,7 @@ function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
               <SidebarMenuItem key={item.id}>
                 <SidebarMenuButton
                   isActive={activeTab === item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleTabChange(item.id)}
                   tooltip={item.label}
                 >
                   <item.icon className="h-4 w-4" />
@@ -154,17 +164,16 @@ function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
               </div>
             </div>
 
-            <LoadingOverlay isLoading={isMutating} text="Saving...">
-              {activeTab === 'expenses' && <ExpenseList />}
-              {activeTab === 'members' && isAdmin && <MembersPanel />}
-              {activeTab === 'fx' && isAdmin && <FXRatePanel />}
-              {activeTab === 'balances' && <BalancesPanel />}
-              {activeTab === 'settle' && <SettlementPanel />}
-            </LoadingOverlay>
+            {activeTab === 'expenses' && <ExpenseList />}
+            {activeTab === 'members' && isAdmin && <MembersPanel />}
+            {activeTab === 'fx' && isAdmin && <FXRatePanel />}
+            {activeTab === 'balances' && <BalancesPanel />}
+            {activeTab === 'settle' && <SettlementPanel />}
           </div>
         </main>
       </SidebarInset>
     </SidebarProvider>
+    </>
   );
 }
 
