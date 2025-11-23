@@ -6,7 +6,7 @@ import * as api from '@/lib/api';
 import type { Trip, Member, Expense, FXRate } from '@/types';
 
 interface TripData extends Trip {
-  members: (Member & { balances: { currency: string; amount: number; fxRate: number | null }[] })[];
+  members: Member[];
   fxRates: FXRate[];
   expenses: Expense[];
 }
