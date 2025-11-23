@@ -102,6 +102,7 @@ function ExpenseDetailView({ expense, onClose }: { expense: Expense; onClose: ()
         </div>
 
         {/* Shares */}
+        {expense.shares && expense.shares.length > 0 && (
         <div className="space-y-2">
           <div className="text-sm text-muted-foreground">Split between</div>
           <div className="space-y-1.5">
@@ -118,6 +119,7 @@ function ExpenseDetailView({ expense, onClose }: { expense: Expense; onClose: ()
             })}
           </div>
         </div>
+        )}
       </div>
 
       <DialogFooter className="gap-2">
