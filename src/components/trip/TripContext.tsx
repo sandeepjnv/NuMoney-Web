@@ -16,6 +16,7 @@ interface TripContextType {
   currentTripId: string | null;
   currentTrip: TripData | null;
   isLoading: boolean;
+  isMutating: boolean;
   isAdmin?: boolean;
   setCurrentTripId: (id: string | null) => void;
   createTrip: (name: string, startDate?: string, endDate?: string) => Promise<void>;
@@ -111,11 +112,23 @@ export function TripProvider({ children, tripId: externalTripId, isAdmin = true 
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['trip', currentTripId] }),
   });
 
+  const isMutating =
+    createTripMutation.isPending ||
+    updateTripMutation.isPending ||
+    deleteTripMutation.isPending ||
+    addMemberMutation.isPending ||
+    removeMemberMutation.isPending ||
+    setMemberBalanceMutation.isPending ||
+    setFXRateMutation.isPending ||
+    addExpenseMutation.isPending ||
+    deleteExpenseMutation.isPending;
+
   const value: TripContextType = {
     trips,
     currentTripId,
     currentTrip: currentTrip || null,
     isLoading: tripsLoading || tripLoading,
+    isMutating,
     isAdmin,
     setCurrentTripId,
     createTrip: async (name, startDate, endDate) => {

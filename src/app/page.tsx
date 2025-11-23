@@ -9,13 +9,18 @@ import {
   CreateTripDialog,
 } from '@/components/trip';
 import { ExternalLink, Plus } from 'lucide-react';
+import { Loader, LoadingOverlay } from '@/components/ui/loader';
 
 function AdminDashboard() {
-  const { trips, isLoading } = useTripContext();
+  const { trips, isLoading, isMutating } = useTripContext();
   const router = useRouter();
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-20">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader size="lg" text="Loading trips..." />
+      </div>
+    );
   }
 
   return (
@@ -33,6 +38,7 @@ function AdminDashboard() {
 
       {/* Main Content */}
       <main className="container max-w-4xl mx-auto px-4 py-6">
+        <LoadingOverlay isLoading={isMutating} text="Creating trip...">
         <Card>
           <CardHeader>
             <CardTitle>Your Trips</CardTitle>
@@ -87,6 +93,7 @@ function AdminDashboard() {
             )}
           </CardContent>
         </Card>
+        </LoadingOverlay>
       </main>
 
       {/* Footer */}

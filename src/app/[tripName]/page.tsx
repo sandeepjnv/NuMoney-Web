@@ -29,6 +29,7 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { Receipt, Users, TrendingUp, Wallet, HandCoins, Banknote, Calculator } from 'lucide-react';
+import { FullPageLoader, LoadingOverlay } from '@/components/ui/loader';
 
 const ADMIN_PASSWORD = 'numoney2024';
 
@@ -41,18 +42,11 @@ const navItems = [
 ];
 
 function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
-  const { currentTrip, isLoading } = useTripContext();
+  const { currentTrip, isLoading, isMutating } = useTripContext();
   const [activeTab, setActiveTab] = useState('expenses');
 
   if (isLoading || !currentTrip) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-2xl mb-2">Loading...</div>
-          <div className="text-muted-foreground">Fetching trip data</div>
-        </div>
-      </div>
-    );
+    return <FullPageLoader text="Fetching trip data..." />;
   }
 
   const expenses = currentTrip.expenses || [];
@@ -160,11 +154,13 @@ function TripDashboard({ isAdmin }: { isAdmin: boolean }) {
               </div>
             </div>
 
-            {activeTab === 'expenses' && <ExpenseList />}
-            {activeTab === 'members' && isAdmin && <MembersPanel />}
-            {activeTab === 'fx' && isAdmin && <FXRatePanel />}
-            {activeTab === 'balances' && <BalancesPanel />}
-            {activeTab === 'settle' && <SettlementPanel />}
+            <LoadingOverlay isLoading={isMutating} text="Saving...">
+              {activeTab === 'expenses' && <ExpenseList />}
+              {activeTab === 'members' && isAdmin && <MembersPanel />}
+              {activeTab === 'fx' && isAdmin && <FXRatePanel />}
+              {activeTab === 'balances' && <BalancesPanel />}
+              {activeTab === 'settle' && <SettlementPanel />}
+            </LoadingOverlay>
           </div>
         </main>
       </SidebarInset>
@@ -195,14 +191,7 @@ export default function TripPage() {
   const trip = trips?.find(t => t.name.toLowerCase() === tripName.toLowerCase());
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-2xl mb-2">Loading...</div>
-          <div className="text-muted-foreground">Finding trip</div>
-        </div>
-      </div>
-    );
+    return <FullPageLoader text="Finding trip..." />;
   }
 
   if (error || !trip) {
